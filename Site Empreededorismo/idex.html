@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Willames & Vitória — Convite</title>
+
+<!--
+  ===========================================================================
+  COMO CUSTOMIZAR ESTE CONVITE
+  ===========================================================================
+  1. Procure o objeto CONFIG lá no <script> no final do arquivo.
+     Ali você troca: nomes dos noivos, data, horário, local, endereço
+     (usado no Google Maps) e o arquivo de música.
+  2. Música: por direitos autorais eu não posso incluir uma música pronta.
+     Coloque um arquivo .mp3 na mesma pasta deste HTML, com o mesmo nome
+     configurado em CONFIG.musica (o padrão é "musica.mp3").
+  3. Cores, fontes e espaçamentos ficam todos no <style> abaixo, organizados
+     por seção e comentados em português.
+  ===========================================================================
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  /* ==========================================================
+     1. RESET BÁSICO
+     ========================================================== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  /* ==========================================================
+     2. TOKENS DE DESIGN — troque aqui para mudar toda a paleta
+     ========================================================== */
+  :root {
+    --ivory: #f9f6ef;
+    --ivory-deep: #efe6d3;
+    --forest: #2c4033;
+    --forest-light: #4a6355;
+    --brass: #ab8a4e;
+    --brass-light: #cdb079;
+    --wine: #7a3b3b;
+    --wine-dark: #5c2b2b;
+    --ink: #3a352c;
+    --ink-light: #746a5b;
+
+    --font-display: 'Cormorant Garamond', serif;
+    --font-body: 'Jost', sans-serif;
+
+    --radius-card: 28px;
+    --shadow-card: 0 40px 70px -25px rgba(44, 64, 51, 0.45);
+  }
+
+  /* ==========================================================
+     3. BASE / ATMOSFERA DE FUNDO
+     ========================================================== */
+  body {
+    min-height: 100vh;
+    font-family: var(--font-body);
+    color: var(--ink);
+    background: var(--ivory);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 16px;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* dois brilhos suaves atrás do cartão, dão profundidade sem poluir */
+  body::before,
+  body::after {
+    content: "";
+    position: fixed;
+    width: 60vmax;
+    height: 60vmax;
+    border-radius: 50%;
+    filter: blur(10px);
+    z-index: 0;
+    pointer-events: none;
+  }
+  body::before {
+    top: -20vmax;
+    left: -20vmax;
+    background: radial-gradient(circle, rgba(74, 99, 85, 0.16), transparent 70%);
+  }
+  body::after {
+    bottom: -25vmax;
+    right: -20vmax;
+    background: radial-gradient(circle, rgba(171, 138, 78, 0.18), transparent 70%);
+  }
+
+  /* ==========================================================
+     4. PALCO — controla a troca entre as duas telas
+     ========================================================== */
+  .palco {
+    position: relative;
+    width: 100%;
+    max-width: 480px;
+    z-index: 1;
+  }
+
+  .tela {
+    display: none;
+  }
+  .tela.ativa {
+    display: block;
+    animation: surgir 0.7s ease both;
+  }
+  @keyframes surgir {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ==========================================================
+     5. CARTÃO — o "convite" com topo em arco
+     ========================================================== */
+  .cartao {
+    position: relative;
+    background: linear-gradient(180deg, var(--ivory) 0%, var(--ivory-deep) 100%);
+    border: 1px solid rgba(171, 138, 78, 0.35);
+    box-shadow: var(--shadow-card);
+    padding: 96px 40px 48px;
+    text-align: center;
+    border-top-left-radius: 50% 130px;
+    border-top-right-radius: 50% 130px;
+    border-bottom-left-radius: var(--radius-card);
+    border-bottom-right-radius: var(--radius-card);
+  }
+
+  .ornamento {
+    position: absolute;
+    top: 44px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 110px;
+    height: auto;
+  }
+
+  .eyebrow {
+    font-family: var(--font-body);
+    font-size: 11.5px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--brass);
+    font-weight: 500;
+  }
+
+  .titulo {
+    font-family: var(--font-display);
+    font-weight: 500;
+    color: var(--forest);
+    font-size: 46px;
+    line-height: 1.1;
+    margin-top: 10px;
+  }
+  .titulo em {
+    font-style: italic;
+    color: var(--wine);
+  }
+
+  .subtitulo {
+    font-family: var(--font-body);
+    font-weight: 300;
+    color: var(--ink-light);
+    font-size: 15px;
+    margin-top: 14px;
+    line-height: 1.6;
+  }
+
+  .divisor {
+    width: 64px;
+    height: 1px;
+    background: var(--brass-light);
+    margin: 28px auto;
+  }
+
+  /* ==========================================================
+     6. FORMULÁRIO DE CADASTRO
+     ========================================================== */
+  .campo {
+    text-align: left;
+    margin-bottom: 20px;
+  }
+  .campo label {
+    display: block;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--forest-light);
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  .campo input[type="text"],
+  .campo input[type="number"] {
+    width: 100%;
+    padding: 13px 16px;
+    font-family: var(--font-body);
+    font-size: 15px;
+    color: var(--ink);
+    background: #fff;
+    border: 1px solid rgba(58, 53, 44, 0.18);
+    border-radius: 10px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .campo input:focus-visible {
+    border-color: var(--brass);
+    box-shadow: 0 0 0 3px rgba(171, 138, 78, 0.2);
+  }
+
+  .opcoes-acompanhante {
+    display: flex;
+    gap: 10px;
+  }
+  .opcao-radio {
+    flex: 1;
+    position: relative;
+  }
+  .opcao-radio input {
+    position: absolute;
+    opacity: 0;
+    inset: 0;
+    cursor: pointer;
+  }
+  .opcao-radio span {
+    display: block;
+    text-align: center;
+    padding: 12px 10px;
+    border: 1px solid rgba(58, 53, 44, 0.18);
+    border-radius: 10px;
+    font-size: 14px;
+    color: var(--ink-light);
+    transition: all 0.2s ease;
+  }
+  .opcao-radio input:checked + span {
+    background: var(--forest);
+    border-color: var(--forest);
+    color: var(--ivory);
+  }
+  .opcao-radio input:focus-visible + span {
+    box-shadow: 0 0 0 3px rgba(171, 138, 78, 0.35);
+  }
+
+  .campo-qtd {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.35s ease, opacity 0.3s ease, margin 0.35s ease;
+  }
+  .campo-qtd.visivel {
+    max-height: 120px;
+    opacity: 1;
+    margin-bottom: 20px;
+  }
+
+  /* ==========================================================
+     7. BOTÕES
+     ========================================================== */
+  .botao {
+    width: 100%;
+    padding: 16px;
+    font-family: var(--font-body);
+    font-size: 13.5px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ivory);
+    background: var(--wine);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.25s ease, transform 0.15s ease;
+    margin-top: 6px;
+  }
+  .botao:hover { background: var(--wine-dark); }
+  .botao:active { transform: scale(0.98); }
+  .botao:focus-visible {
+    outline: 2px solid var(--brass);
+    outline-offset: 3px;
+  }
+
+  .botao.confirmado {
+    background: var(--forest);
+    cursor: default;
+  }
+  .botao.confirmado:hover { background: var(--forest); }
+
+  .botao-secundario {
+    display: inline-block;
+    margin-top: 14px;
+    padding: 13px 22px;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--forest);
+    background: transparent;
+    border: 1px solid var(--forest);
+    border-radius: 10px;
+    text-decoration: none;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  .botao-secundario:hover { background: var(--forest); color: var(--ivory); }
+
+  /* ==========================================================
+     8. TELA DE BOAS-VINDAS — detalhes do evento
+     ========================================================== */
+  .resumo-cadastro {
+    font-size: 13px;
+    color: var(--ink-light);
+    margin-top: 10px;
+    font-style: italic;
+  }
+
+  .lista-detalhes {
+    text-align: left;
+    margin: 30px 0 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .detalhe {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .detalhe svg {
+    flex-shrink: 0;
+    width: 19px;
+    height: 19px;
+    color: var(--brass);
+  }
+  .detalhe .rotulo {
+    display: block;
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+  }
+  .detalhe .valor {
+    font-size: 15px;
+    color: var(--ink);
+    font-weight: 400;
+  }
+
+  .mapa-caixa {
+    position: relative;
+    width: 100%;
+    padding-top: 62%;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid rgba(171, 138, 78, 0.35);
+    margin-bottom: 10px;
+  }
+  .mapa-caixa iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  .musica-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 22px 0 6px;
+    background: transparent;
+    border: none;
+    color: var(--forest-light);
+    font-family: var(--font-body);
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    padding: 6px 4px;
+  }
+  .musica-toggle:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
+  .musica-toggle .nota { font-size: 16px; }
+
+  .status-presenca {
+    margin-top: 16px;
+    font-size: 14px;
+    color: var(--forest);
+    min-height: 20px;
+  }
+
+  /* ==========================================================
+     9. RESPONSIVO
+     ========================================================== */
+  @media (max-width: 420px) {
+    .cartao { padding: 84px 26px 40px; }
+    .titulo { font-size: 38px; }
+  }
+
+  /* ==========================================================
+     10. ACESSIBILIDADE — respeita "reduzir movimento"
+     ========================================================== */
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="palco" id="palco">
+
+  <!-- =======================================================
+       TELA 1 — CADASTRO
+       ======================================================= -->
+  <section class="tela ativa" id="tela-cadastro">
+    <div class="cartao">
+      <svg class="ornamento" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M60 22 C 45 6, 20 6, 5 22" stroke="var(--brass)" stroke-width="1.2"/>
+        <path d="M60 22 C 75 6, 100 6, 115 22" stroke="var(--brass)" stroke-width="1.2"/>
+        <circle cx="60" cy="20" r="3" fill="var(--brass)"/>
+        <path d="M32 16 q4 -7 8 0 q-4 7 -8 0" fill="var(--brass-light)"/>
+        <path d="M88 16 q-4 -7 -8 0 q4 7 8 0" fill="var(--brass-light)"/>
+      </svg>
+
+      <p class="eyebrow">Você está convidado(a)</p>
+      <h1 class="titulo" id="titulo-noivos">Willames <em>&amp;</em> Vitória</h1>
+      <p class="subtitulo">Preencha seus dados para confirmar seu acesso ao nosso dia especial.</p>
+
+      <div class="divisor"></div>
+
+      <form id="form-cadastro" novalidate>
+        <div class="campo">
+          <label for="input-nome">Seu nome</label>
+          <input type="text" id="input-nome" name="nome" placeholder="(Será guardado apenas para o organizamento da lista)" required>
+        </div>
+
+        <div class="campo">
+          <label for="input-idade">Sua idade</label>
+          <input type="number" id="input-idade" name="idade" placeholder="Ex: 28" min="0" max="120" required>
+        </div>
+
+        <div class="campo">
+          <label>Vai levar acompanhante?</label>
+          <div class="opcoes-acompanhante">
+            <label class="opcao-radio">
+              <input type="radio" name="acompanhante" value="nao" checked>
+              <span>Não</span>
+            </label>
+            <label class="opcao-radio">
+              <input type="radio" name="acompanhante" value="sim">
+              <span>Sim</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="campo campo-qtd" id="campo-qtd">
+          <label for="input-qtd">Quantos acompanhantes?</label>
+          <input type="number" id="input-qtd" name="qtd" min="1" max="3" value="1">
+        </div>
+
+        <button type="submit" class="botao">Confirmar</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- =======================================================
+       TELA 2 — BOAS-VINDAS
+       ======================================================= -->
+  <section class="tela" id="tela-boas-vindas">
+    <div class="cartao">
+      <svg class="ornamento" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M60 22 C 45 6, 20 6, 5 22" stroke="var(--brass)" stroke-width="1.2"/>
+        <path d="M60 22 C 75 6, 100 6, 115 22" stroke="var(--brass)" stroke-width="1.2"/>
+        <circle cx="60" cy="20" r="3" fill="var(--brass)"/>
+        <path d="M32 16 q4 -7 8 0 q-4 7 -8 0" fill="var(--brass-light)"/>
+        <path d="M88 16 q-4 -7 -8 0 q4 7 8 0" fill="var(--brass-light)"/>
+      </svg>
+
+      <p class="eyebrow">Seja bem-vindo(a)</p>
+      <h1 class="titulo"><span id="nome-convidado">convidado(a)</span>!</h1>
+      <p class="subtitulo" id="texto-boas-vindas">
+        Ficamos muito felizes em ter você conosco nesse momento tão especial. Guarde este convite: nele está tudo o que você precisa para chegar até nós.
+      </p>
+      <p class="resumo-cadastro" id="resumo-cadastro"></p>
+
+      <div class="divisor"></div>
+
+      <div class="lista-detalhes">
+        <div class="detalhe">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+          <div><span class="rotulo">Data</span><span class="valor" id="valor-data">15 de novembro de 2026</span></div>
+        </div>
+        <div class="detalhe">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+          <div><span class="rotulo">Horário</span><span class="valor" id="valor-horario">16h00</span></div>
+        </div>
+        <div class="detalhe">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s7-7.2 7-12a7 7 0 1 0-14 0c0 4.8 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>
+          <div><span class="rotulo">Local</span><span class="valor" id="valor-local">Espaço Jardim das Rosas</span></div>
+        </div>
+      </div>
+
+      <div class="mapa-caixa">
+        <iframe id="mapa-embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+      </div>
+      <a href="#" target="_blank" rel="noopener" class="botao-secundario" id="link-maps">Abrir no Google Maps</a>
+
+      <br>
+      <button type="button" class="musica-toggle" id="btn-musica">
+        <span class="nota">♪</span>
+        <span id="texto-musica">Tocar música ambiente</span>
+      </button>
+      <audio id="audio-fundo" loop preload="none">
+        <source src="musica.mp3" type="audio/mpeg">
+      </audio>
+
+      <div class="divisor"></div>
+
+      <button type="button" class="botao" id="btn-presenca">Confirmar presença</button>
+      <p class="status-presenca" id="status-presenca"></p>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  /* ============================================================
+     CONFIGURAÇÃO DO CONVITE — edite só aqui para personalizar
+     ============================================================ */
+  const CONFIG = {
+    noivoA: "Ana",
+    noivoB: "Rafael",
+    dataEvento: "15 de novembro de 2026",
+    horario: "16h00",
+    nomeLocal: "Espaço Jardim das Rosas",
+    endereco: "Rua das Flores, 123, Jatiúca, Maceió - AL",
+    musica: "musica.mp3" // coloque um arquivo .mp3 com esse nome na mesma pasta
+  };
+
+  // Preenche os detalhes do evento a partir do CONFIG
+  document.getElementById("valor-data").textContent = CONFIG.dataEvento;
+  document.getElementById("valor-horario").textContent = CONFIG.horario;
+  document.getElementById("valor-local").textContent = CONFIG.nomeLocal;
+
+  // Monta os links do Google Maps a partir do endereço configurado
+  const enderecoCodificado = encodeURIComponent(CONFIG.endereco);
+  document.getElementById("mapa-embed").src = `https://www.google.com/maps?q=${enderecoCodificado}&output=embed`;
+  document.getElementById("link-maps").href = `https://www.google.com/maps/search/?api=1&query=${enderecoCodificado}`;
+
+  /* ============================================================
+     TROCA ENTRE TELAS
+     ============================================================ */
+  const telaCadastro = document.getElementById("tela-cadastro");
+  const telaBoasVindas = document.getElementById("tela-boas-vindas");
+
+  function irParaBoasVindas() {
+    telaCadastro.classList.remove("ativa");
+    telaBoasVindas.classList.add("ativa");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  /* ============================================================
+     MOSTRAR/ESCONDER CAMPO DE QUANTIDADE DE ACOMPANHANTES
+     ============================================================ */
+  const radiosAcompanhante = document.querySelectorAll('input[name="acompanhante"]');
+  const campoQtd = document.getElementById("campo-qtd");
+
+  radiosAcompanhante.forEach(radio => {
+    radio.addEventListener("change", () => {
+      if (radio.value === "sim" && radio.checked) {
+        campoQtd.classList.add("visivel");
+      } else if (radio.value === "nao" && radio.checked) {
+        campoQtd.classList.remove("visivel");
+      }
+    });
+  });
+
+  /* ============================================================
+     ENVIO DO CADASTRO
+     ============================================================ */
+  const formCadastro = document.getElementById("form-cadastro");
+
+  formCadastro.addEventListener("submit", function (evento) {
+    evento.preventDefault();
+
+    const nome = document.getElementById("input-nome").value.trim() || "convidado(a)";
+    const idade = document.getElementById("input-idade").value;
+    const levaAcompanhante = document.querySelector('input[name="acompanhante"]:checked').value;
+    const qtd = levaAcompanhante === "sim" ? document.getElementById("input-qtd").value : 0;
+
+    // Personaliza a tela de boas-vindas com os dados do cadastro
+    document.getElementById("nome-convidado").textContent = nome;
+
+    let resumo = `Cadastro: ${nome}, ${idade} anos`;
+    resumo += qtd > 0 ? ` · +${qtd} acompanhante(s)` : " · sem acompanhantes";
+    document.getElementById("resumo-cadastro").textContent = resumo;
+
+    irParaBoasVindas();
+
+    // tenta iniciar a música (o clique no botão conta como interação do usuário)
+    const audio = document.getElementById("audio-fundo");
+    audio.play().then(() => {
+      document.getElementById("texto-musica").textContent = "Pausar música ambiente";
+    }).catch(() => {
+      // navegador bloqueou o autoplay — usuário pode iniciar pelo botão de música
+    });
+  });
+
+  /* ============================================================
+     BOTÃO DE MÚSICA
+     ============================================================ */
+  const audio = document.getElementById("audio-fundo");
+  const btnMusica = document.getElementById("btn-musica");
+  const textoMusica = document.getElementById("texto-musica");
+
+  btnMusica.addEventListener("click", () => {
+    if (audio.paused) {
+      audio.play().catch(() => {});
+      textoMusica.textContent = "Pausar música ambiente";
+    } else {
+      audio.pause();
+      textoMusica.textContent = "Tocar música ambiente";
+    }
+  });
+
+  /* ============================================================
+     CONFIRMAR PRESENÇA
+     ============================================================ */
+  const btnPresenca = document.getElementById("btn-presenca");
+  const statusPresenca = document.getElementById("status-presenca");
+
+  btnPresenca.addEventListener("click", () => {
+    btnPresenca.textContent = "Presença confirmada ✓";
+    btnPresenca.classList.add("confirmado");
+    btnPresenca.disabled = true;
+    statusPresenca.textContent = "Obrigado por confirmar! Estamos esperando você(s).";
+  });
+</script>
+
+</body>
+</html>
